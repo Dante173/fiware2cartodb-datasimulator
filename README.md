@@ -1,2 +1,3 @@
 # Fiware2cartodb - Data Simulator
-Data simulator for Fiware2CartoDB connections.
+Data simulator for Fiware Orion to CartoDB connections.
+For testing purposes only.
