@@ -3,11 +3,22 @@ Data simulator for Fiware Orion to CartoDB connections.
 For testing purposes only.
 
 ## Requeriments
-Fiware Orion to CartoDB API deployment:
+Fiware Orion to CartoDB connector API deployment:
 - Add fiware-orion2cartodb as submodule.
 - Docker and Docker-Compose.
 - Callback URL to send notifications must be visible to Context broker.
 
-Run broker (Data Simulator):
+Broker (Data Simulator):
 - Python >= 2.7 or Python >= 3.4.
 - Python Requests library.
+
+## Usage
+Run Fiware Orion to CartoDB connector API:
+- Build and run Docker Container with Docker-Compose (docker-compose.dev.yml).
+
+Run broker (Data Simulator):
+- You must properly configure files (fiware_auth.json and orioncontextbrokerconfig.py; see example files).
+- Run broker:
+```python
+$ python broker.py
+```
