@@ -1,0 +1,18 @@
+{
+  "auth": {
+    "identity": {
+      "methods": [
+        "password"
+      ],
+      "password": {
+        "user": {
+          "domain": {
+            "name": "service name"
+          },
+          "name": "user name",
+          "password": "xxxxxxxxxxx"
+        }
+      }
+    }
+  }
+}
