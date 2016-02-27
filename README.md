@@ -4,7 +4,7 @@ For testing purposes only.
 
 ## Requeriments
 Fiware Orion to CartoDB connector API deployment:
-- Add fiware-orion2cartodb as submodule.
+- Add [fiware-orion2cartodb](https://github.com/GeographicaGS/fiware-orion2cartodb) as submodule. You must properly configure file orion2cartodb.yaml.
 - Docker and Docker-Compose.
 - Callback URL to send notifications must be visible to Context broker.
 
@@ -19,6 +19,6 @@ Run Fiware Orion to CartoDB connector API:
 Run broker (Data Simulator):
 - You must properly configure files (fiware_auth.json and orioncontextbrokerconfig.py; see example files).
 - Run broker:
-```python
+```
 $ python broker.py
 ```
