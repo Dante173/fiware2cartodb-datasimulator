@@ -1,0 +1,12 @@
+fiware2cartodb:
+  build: docker
+  ports:
+    - "3000:3000"
+
+  # Dev values
+  volumes:
+    - ./lib/fiware-orion2cartodb:/usr/src/app
+
+  working_dir: /usr/src/app
+
+  command: python orion2cartodb.py
