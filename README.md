@@ -1,5 +1,6 @@
 # Fiware2cartodb - Data Simulator
 Data simulator for Fiware Orion to CartoDB connections.
+
 For testing purposes only.
 
 ## Requeriments
@@ -18,7 +19,8 @@ Run Fiware Orion to CartoDB connector API:
 
 Run broker (Data Simulator):
 - You must properly configure files (fiware_auth.json and orioncontextbrokerconfig.py; see example files).
-- Run broker:
+- Run data simulator:
 ```
 $ python broker.py
 ```
+- Stop data simulator: CTRL+C
