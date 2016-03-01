@@ -34,42 +34,6 @@ from orioncontextbrokerconfig import ocbrconfig
 class UpdateAuthTokenException(Exception):
     pass
 
-class UpdateSubscription(ProcLauncher):
-
-    def workerLauncher(self, title):
-        self.__newSubscrition()
-        self.logger.info("Updated subscription successfully!")
-
-    def __newSubscrition(self):
-        json_data_subs = {
-                "entities": [
-                    {
-                      "type": "geoEntTest",
-                      "isPattern": "true",
-                      "id": "10*"
-                    }
-                ],
-                "attributes": [
-                        "position","timeinstant","valor_01", "valor_02"
-                ],
-                "reference": ocbrconfig.get("url_sbc"),
-                "duration": "P1M",
-                "notifyConditions": [
-                    {
-                        "type": "ONCHANGE",
-                        "condValues": [
-                            "position","timeinstant","valor_01", "valor_02"
-                        ]
-                    }
-                ],
-                "throttling": "PT0S"
-            }
-
-        __auth_token, __exp_date = ctbr.getAuthToken(ssl=False)
-        if not __auth_token:
-            raise UpdateAuthTokenException("No Auth Token")
-        udt = ctbr.postData(__auth_token, json_data_subs, "subscribe", ssl=False)
-        # print(udt)
 
 class UpdateTestProccess(ProcLauncher):
 
@@ -150,6 +114,43 @@ class UpdateTestProccess(ProcLauncher):
             self.logger.info("CartoDB and Orion update successfully for Entity: {}!".format(ent))
             sleep(0.1)
 
+class UpdateSubscription(ProcLauncher):
+
+    def workerLauncher(self, title):
+        self.__newSubscrition()
+        self.logger.info("Updated subscription successfully!")
+
+    def __newSubscrition(self):
+        json_data_subs = {
+                "entities": [
+                    {
+                      "type": "geoEntTest",
+                      "isPattern": "true",
+                      "id": "10*"
+                    }
+                ],
+                "attributes": [
+                        "position","timeinstant","valor_01", "valor_02"
+                ],
+                "reference": ocbrconfig.get("url_sbc_api"),
+                "duration": "P1M",
+                "notifyConditions": [
+                    {
+                        "type": "ONCHANGE",
+                        "condValues": [
+                            "position","timeinstant","valor_01", "valor_02"
+                        ]
+                    }
+                ],
+                "throttling": "PT0S"
+            }
+
+        __auth_token, __exp_date = ctbr.getAuthToken(ssl=False)
+        if not __auth_token:
+            raise UpdateAuthTokenException("No Auth Token")
+        udt = ctbr.postData(__auth_token, json_data_subs, "subscribe", ssl=False)
+        # print(udt)
+
 def signal_handler(signal, frame):
     for l in launchers:
         l.stop()
@@ -172,6 +173,7 @@ if __name__ == '__main__':
     # update subscription period: 72000 seconds (20 hours)
     launchers = [UpdateSubscription("Update subscription", 72000, delay=0),
                  UpdateTestProccess("Simulator proccess", 15, delay=0)]
+    # launchers = [UpdateTestProccess("Simulator proccess", 15, delay=0)]
 
     for l in launchers:
         l.start()
