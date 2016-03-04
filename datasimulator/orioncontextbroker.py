@@ -51,7 +51,7 @@ class OrionContextBroker(object):
         self.__serv_name = serv_name
         self.__subserv_name = subserv_name
 
-    def getAuthToken(self, ssl=False):
+    def getAuthToken(self, timeout=10, ssl=False):
         try:
             headers_authtk = {
                 'Content-Type': 'application/json',
@@ -62,7 +62,7 @@ class OrionContextBroker(object):
 
             payload = json.dumps(json_data)
 
-            resp = requests.post(self.__url_authtk, headers=headers_authtk, data=payload, verify=ssl)
+            resp = requests.post(self.__url_authtk, headers=headers_authtk, data=payload, verify=ssl, timeout=timeout)
 
             if resp.ok:
                 auth_token = resp.headers.get('x-subject-token')
@@ -76,7 +76,7 @@ class OrionContextBroker(object):
             print("Error: {}".format(err))
 
 
-    def postData(self, auth_token, json_data, proctype, ssl=False):
+    def postData(self, auth_token, json_data, proctype, timeout=10, ssl=False):
 
         if proctype == "query":
             url = self.__url_qry
@@ -97,7 +97,7 @@ class OrionContextBroker(object):
 
         payload = json.dumps(json_data)
 
-        resp = (requests.post(url, headers=headers, data=payload, verify=ssl))
+        resp = (requests.post(url, headers=headers, data=payload, verify=ssl, timeout=timeout))
         if resp.ok:
             return(resp.json())
         else:

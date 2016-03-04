@@ -3,6 +3,8 @@ Data simulator for Fiware Orion to CartoDB connections.
 
 For testing purposes only.
 
+Remark: Under work!
+
 ## Requeriments
 Fiware Orion to CartoDB connector API deployment:
 - Add [fiware-orion2cartodb](https://github.com/GeographicaGS/fiware-orion2cartodb) as submodule. You must properly configure file orion2cartodb.yaml.

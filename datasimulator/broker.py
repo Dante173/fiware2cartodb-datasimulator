@@ -22,6 +22,7 @@
 
 import signal
 import random
+import json
 from time import sleep
 from threading import active_count
 from datetime import datetime
@@ -34,6 +35,8 @@ from orioncontextbrokerconfig import ocbrconfig
 class UpdateAuthTokenException(Exception):
     pass
 
+class SubscriptionException(Exception):
+    pass
 
 class UpdateTestProccess(ProcLauncher):
 
@@ -41,7 +44,7 @@ class UpdateTestProccess(ProcLauncher):
         try:
             self.__auth_token, self.__exp_date = ctbr.getAuthToken(ssl=False)
             self.logger.info("Auth_token successfully updated!. Expires at: {}".format(self.__exp_date))
-            # print(self.__auth_token, self.__exp_date)
+            print(self.__auth_token, self.__exp_date)
 
         except Exception as err:
             self.logger.error("UpdateAuthToken error: {}".format(err))
@@ -78,15 +81,17 @@ class UpdateTestProccess(ProcLauncher):
         self.logger.info("Test query successfully!")
 
     def __simulateUpdate(self):
-        list_ents = ["10025", "10026", "10027", "10028", "10029"]
-        # list_ents = ["10025", "10026"]
-        for ent in list_ents:
+        list_ents01 = ["10025", "10026", "10027", "10028", "10029"]
+        list_ents02 = ["dispositivo_n01", "dispositivo_n02", "dispositivo_n03", "dispositivo_n04", "dispositivo_n05"]
+        list_ents03 = ["dispositivo_k01", "dispositivo_k02", "dispositivo_k03", "dispositivo_k04", "dispositivo_k05"]
+
+        for ent01,ent02,ent03 in zip(list_ents01, list_ents02, list_ents03):
             json_data_udt = {
                 "contextElements": [
                     {
                         "type": "geoEntTest",
                         "isPattern": "false",
-                        "id": ent,
+                        "id": ent01,
                         "attributes": [
                           {
                               "name": "timeinstant",
@@ -104,6 +109,40 @@ class UpdateTestProccess(ProcLauncher):
                               "value": round(random.random(), 2)
                           }
                         ]
+                    },
+                    {
+                        "type": "device",
+                        "isPattern": "false",
+                        "id": ent02,
+                        "attributes": [
+                          {
+                              "name": "timeinstant",
+                              "type": "ISO8601",
+                              "value": datetime.utcnow().isoformat()
+                          },
+                          {
+                              "name": "value",
+                              "type": "string",
+                              "value": round(random.random() * 10, 2)
+                          }
+                        ]
+                    },
+                    {
+                        "type": "water_dev",
+                        "isPattern": "false",
+                        "id": ent03,
+                        "attributes": [
+                          {
+                              "name": "timeinstant",
+                              "type": "ISO8601",
+                              "value": datetime.utcnow().isoformat()
+                          },
+                          {
+                              "name": "value",
+                              "type": "string",
+                              "value": round(random.random() * 10, 2)
+                          }
+                        ]
                     }
                 ],
                 "updateAction": "UPDATE"
@@ -111,7 +150,7 @@ class UpdateTestProccess(ProcLauncher):
 
             udt = ctbr.postData(self.__auth_token, json_data_udt, "update", ssl=False)
             # print(udt)
-            self.logger.info("CartoDB and Orion update successfully for Entity: {}!".format(ent))
+            self.logger.info("CartoDB and Orion update successfully for Entities: {0},{1},{2}!".format(ent01,ent02,ent03))
             sleep(0.1)
 
 class UpdateSubscription(ProcLauncher):
@@ -126,7 +165,7 @@ class UpdateSubscription(ProcLauncher):
                     {
                       "type": "geoEntTest",
                       "isPattern": "true",
-                      "id": "10*"
+                      "id": ".*"
                     }
                 ],
                 "attributes": [
@@ -149,7 +188,13 @@ class UpdateSubscription(ProcLauncher):
         if not __auth_token:
             raise UpdateAuthTokenException("No Auth Token")
         udt = ctbr.postData(__auth_token, json_data_subs, "subscribe", ssl=False)
-        # print(udt)
+        print(udt)
+        subscr_data = udt.get("subscribeResponse")
+        if subscr_data:
+            with open('subscr_data.json', 'w') as fl:
+                json.dump(subscr_data, fl)
+        else:
+            raise SubscriptionException("Error with subscription")
 
 def signal_handler(signal, frame):
     for l in launchers:
@@ -171,9 +216,9 @@ if __name__ == '__main__':
 
     # data simulator period: 15 seconds
     # update subscription period: 72000 seconds (20 hours)
-    launchers = [UpdateSubscription("Update subscription", 72000, delay=0),
-                 UpdateTestProccess("Simulator proccess", 15, delay=0)]
-    # launchers = [UpdateTestProccess("Simulator proccess", 15, delay=0)]
+    # launchers = [UpdateSubscription("Update subscription", 72000, delay=0),
+    #              UpdateTestProccess("Simulator proccess", 15, delay=0)]
+    launchers = [UpdateTestProccess("Simulator proccess", 15, delay=0)]
 
     for l in launchers:
         l.start()

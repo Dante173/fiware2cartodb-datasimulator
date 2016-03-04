@@ -2,6 +2,7 @@
 fiware_auth.json
 orion2cartodb.yaml
 orioncontextbrokerconfig.py
+subscr_data.json
 
 
 # Byte-compiled / optimized / DLL files
