@@ -84,8 +84,9 @@ class UpdateTestProccess(ProcLauncher):
         list_ents01 = ["10025", "10026", "10027", "10028", "10029"]
         list_ents02 = ["dispositivo_n01", "dispositivo_n02", "dispositivo_n03", "dispositivo_n04", "dispositivo_n05"]
         list_ents03 = ["dispositivo_k01", "dispositivo_k02", "dispositivo_k03", "dispositivo_k04", "dispositivo_k05"]
+        list_ents04 = ["4452","4452","4452","4452","4452"]
 
-        for ent01,ent02,ent03 in zip(list_ents01, list_ents02, list_ents03):
+        for ent01,ent02,ent03,ent04 in zip(list_ents01, list_ents02, list_ents03, list_ents04):
             json_data_udt = {
                 "contextElements": [
                     {
@@ -143,6 +144,23 @@ class UpdateTestProccess(ProcLauncher):
                               "value": round(random.random() * 10, 2)
                           }
                         ]
+                    },
+                    {
+                        "type": "noGeoEnt",
+                        "isPattern": "false",
+                        "id": ent04,
+                        "attributes": [
+                          {
+                              "name": "timeinstant",
+                              "type": "ISO8601",
+                              "value": datetime.utcnow().isoformat()
+                          },
+                          {
+                              "name": "temperature",
+                              "type": "integer",
+                              "value": round(random.random() * 10, 0)
+                          }
+                        ]
                     }
                 ],
                 "updateAction": "UPDATE"
@@ -150,7 +168,7 @@ class UpdateTestProccess(ProcLauncher):
 
             udt = ctbr.postData(self.__auth_token, json_data_udt, "update", ssl=False)
             # print(udt)
-            self.logger.info("CartoDB and Orion update successfully for Entities: {0},{1},{2}!".format(ent01,ent02,ent03))
+            self.logger.info("CartoDB and Orion update successfully for Entities: {0},{1},{2},{3}!".format(ent01,ent02,ent03,ent04))
             sleep(0.1)
 
 class UpdateSubscription(ProcLauncher):
